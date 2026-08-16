@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Solenn's Learning Journal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  :root{
+    --paper:#FDF0F1; --card:#FFFAFB; --plum:#6E2145; --ink:#4A2438;
+    --gold:#C77D8A; --gold-soft:#F7DFE3; --gold-line:rgba(199,125,138,0.35);
+    --sapphire:#B5477A; --sapphire-soft:#F7DCE8;
+    --sage:#8A4F9E; --sage-soft:#EEDFF4;
+    --coral:#E15C7E; --coral-soft:#FBDDE5;
+    --admin:#2E6B9E; --admin-soft:#DCE9F4;
+    --shadow:0 6px 18px rgba(110,33,69,0.12);
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{ background:var(--paper); background-image:radial-gradient(circle at 10% 5%,rgba(199,125,138,.10),transparent 40%),radial-gradient(circle at 90% 15%,rgba(225,92,126,.09),transparent 35%); color:var(--ink); font-family:'Lora',Georgia,serif; -webkit-font-smoothing:antialiased; min-height:100vh; }
+  .app-shell{ max-width:880px; margin:0 auto; padding:clamp(16px,4vw,40px); }
+  .crest{ text-align:center; margin-bottom:14px; } .crest svg{width:52px;height:52px;}
+  h1{ font-family:'Playfair Display',Georgia,serif; font-weight:700; font-style:italic; color:var(--plum); font-size:clamp(1.5rem,5vw,2.3rem); margin:6px 0 4px; text-align:center; }
+  .subtitle{ color:#8a5c6d; font-size:clamp(.85rem,2.2vw,.98rem); margin:0 0 14px; text-align:center; }
+  .staff-divider{ display:flex; align-items:center; justify-content:center; gap:10px; margin:16px 0 22px; color:var(--gold); }
+  .staff-divider .line{ flex:1; max-width:220px; height:1px; background:linear-gradient(to right,transparent,var(--gold-line),transparent); }
+  .staff-divider svg{width:18px;height:18px;flex-shrink:0;}
+  .id-screen{ max-width:520px; margin:0 auto; }
+  .id-card{ background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:26px 24px; text-align:center; }
+  .id-card h2{ font-family:'Playfair Display',serif; color:var(--plum); font-size:1.3rem; margin:0 0 4px; }
+  .id-card p.sub{ color:#8a5c6d; font-size:.9rem; margin:0 0 20px; }
+  .id-group{ margin-bottom:18px; } .id-group .label{ font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:#a06377; margin-bottom:8px; }
+  .id-btns{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .id-btn{ font-family:'Lora',serif; font-size:.98rem; font-weight:600; padding:11px 20px; border-radius:999px; cursor:pointer; border:1.5px solid var(--gold-line); background:#fff; color:var(--plum); transition:all .15s ease; }
+  .id-btn:hover{ transform:translateY(-1px); background:var(--gold-soft); }
+  .id-btn.admin-btn{ border-color:var(--admin); color:var(--admin); }
+  .id-btn.admin-btn:hover{ background:var(--admin-soft); }
+  .id-note{ font-size:.76rem; color:#b98ea0; margin-top:8px; font-style:italic; }
+  .id-bar{ display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; background:var(--card); border-radius:999px; box-shadow:var(--shadow); padding:8px 16px; margin:0 auto 24px; width:fit-content; max-width:100%; font-size:.9rem; }
+  .id-bar .you{ color:var(--plum); font-weight:600; }
+  .id-bar .role-tag{ font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; padding:2px 9px; border-radius:999px; background:var(--gold-soft); color:#8a5c2a; }
+  .id-bar .role-tag.tutor{ background:var(--sapphire-soft); color:var(--sapphire); }
+  .id-bar .role-tag.student{ background:var(--sage-soft); color:var(--sage); }
+  .id-bar .role-tag.parent{ background:var(--coral-soft); color:var(--coral); }
+  .id-bar .role-tag.admin{ background:var(--admin-soft); color:var(--admin); }
+  .id-bar .switch{ background:none; border:none; color:#a06377; font-size:.82rem; cursor:pointer; text-decoration:underline; font-family:'Lora',serif; }
+  .greeting-line{ text-align:center; font-style:italic; color:var(--plum); margin:-8px 0 22px; font-size:.95rem; }
+  .admin-banner{ background:var(--admin-soft); border:1.5px solid rgba(46,107,158,.25); border-radius:12px; padding:10px 16px; margin-bottom:22px; display:flex; align-items:center; gap:10px; font-size:.85rem; color:var(--admin); }
+  .admin-banner svg{ width:18px; height:18px; flex-shrink:0; }
+  .card{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:20px 22px; margin-bottom:22px; }
+  .card h2{ font-family:'Playfair Display',serif; font-weight:700; color:var(--plum); font-size:clamp(1.05rem,3vw,1.3rem); margin:0 0 4px; }
+  .card .card-sub{ font-size:.85rem; color:#8a6a78; margin:0 0 14px; }
+  .stats-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:22px; }
+  @media(max-width:600px){ .stats-row{ grid-template-columns:1fr; } }
+  .tutor-card{ border-radius:16px; padding:18px 18px 16px; box-shadow:var(--shadow); }
+  .tutor-card.math{ background:var(--sapphire-soft); } .tutor-card.science{ background:var(--sage-soft); }
+  .tutor-card-top{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .tutor-icon{ width:34px;height:34px;flex-shrink:0; border-radius:50%; display:flex;align-items:center;justify-content:center; color:white; }
+  .tutor-card.math .tutor-icon{ background:var(--sapphire); } .tutor-card.science .tutor-icon{ background:var(--sage); }
+  .tutor-icon svg{width:18px;height:18px;}
+  .tutor-name{ font-family:'Playfair Display',serif; font-weight:700; font-size:1.05rem; color:var(--plum); margin:0; }
+  .tutor-subject{ font-size:.78rem; color:#6a4d5a; margin:0; text-transform:uppercase; letter-spacing:.06em; }
+  .hymn-row{ display:flex; gap:8px; margin:12px 0 10px; }
+  .hymn-tile{ width:32px;height:40px; border-radius:6px; background:var(--gold-soft); border:1.5px solid var(--gold-line); display:flex;align-items:center;justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:.9rem; color:#b06a7a; transition:all .35s ease; }
+  .hymn-tile.filled{ background:var(--gold); color:white; border-color:var(--gold); box-shadow:0 3px 8px rgba(199,125,138,.4); }
+  .hymn-tile.filled.noslot{ background:#d9c3e0; color:#5a4060; border-color:#c9a9d0; box-shadow:none; }
+  .hymn-caption{ font-size:.8rem; color:#6a4d5a; margin:0 0 12px; font-family:'IBM Plex Mono',monospace; }
+  .pay-btn{ font-family:'Lora',serif; font-weight:600; font-size:.85rem; border:none; padding:9px 16px; border-radius:999px; cursor:pointer; color:white; background:var(--gold); box-shadow:0 3px 10px rgba(199,125,138,.35); transition:transform .15s ease; }
+  .pay-btn:disabled{ background:#e3cdd3; box-shadow:none; cursor:not-allowed; color:#a89198; }
+  .pay-btn:not(:disabled):hover{ transform:translateY(-1px); }
+  .pay-panel{ margin-top:12px; padding:12px; border-radius:12px; background:#fff; border:1.5px dashed var(--gold-line); }
+  .pay-panel .dates{ font-size:.8rem; color:#6a4d5a; margin-bottom:6px; }
+  .pay-panel .breakdown{ font-size:.82rem; color:var(--plum); font-weight:600; margin-bottom:10px; }
+  .pay-panel label{ display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:#a06377; margin-bottom:5px; }
+  .pay-panel input,.pay-panel select{ width:100%; font-family:'Lora',serif; font-size:.95rem; padding:9px 11px; border-radius:9px; border:1.5px solid var(--gold-line); background:#fffdfe; color:var(--ink); margin-bottom:12px; }
+  .pay-panel .row{ display:flex; gap:8px; }
+  .pay-confirm{ flex:1; font-family:'Lora',serif; font-weight:600; border:none; border-radius:999px; padding:10px; background:var(--sage); color:white; cursor:pointer; }
+  .pay-cancel{ font-family:'Lora',serif; border:1.5px solid var(--gold-line); border-radius:999px; padding:10px 16px; background:#fff; color:#8a6a78; cursor:pointer; }
+  .recent-topics{ margin-top:12px; font-size:.82rem; color:#5a4050; }
+  .recent-topics ul{ margin:6px 0 0; padding-left:18px; } .recent-topics li{ margin-bottom:2px; }
+  .form-card{ border-top:4px solid var(--coral); } .admin-form-card{ border-top:4px solid var(--admin); }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  @media(max-width:600px){ .form-grid{ grid-template-columns:1fr; } }
+  .field label{ display:block; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:#8a6a78; margin-bottom:5px; }
+  .field input,.field select{ width:100%; font-family:'Lora',serif; font-size:.95rem; padding:9px 11px; border-radius:9px; border:1.5px solid #e6d0d8; background:#fffdfe; color:var(--ink); }
+  .field input:disabled,.field select:disabled{ background:#f7eef1; color:#a88f9a; }
+  .field.full{ grid-column:1 / -1; }
+  .locked-note{ font-size:.74rem; color:#a06377; margin-top:4px; font-style:italic; }
+  .noses-toggle{ display:flex; align-items:center; gap:9px; margin:2px 0 16px; padding:11px 13px; border-radius:10px; background:var(--gold-soft); cursor:pointer; }
+  .noses-toggle input{ width:18px;height:18px; accent-color:var(--coral); cursor:pointer; }
+  .noses-toggle label{ font-size:.86rem; color:var(--plum); cursor:pointer; }
+  .submit-row{ display:flex; justify-content:flex-end; }
+  .add-btn{ font-family:'Lora',serif; font-weight:600; font-size:.92rem; border:none; padding:11px 22px; border-radius:999px; cursor:pointer; color:white; background:var(--coral); box-shadow:0 4px 12px rgba(225,92,126,.35); }
+  .add-btn.admin-add{ background:var(--admin); box-shadow:0 4px 12px rgba(46,107,158,.3); }
+  .add-btn:hover{ transform:translateY(-1px); }
+  .pending-card{ border-top:4px solid var(--gold); }
+  .pending-item{ display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #f4e3e8; }
+  .pending-item:last-child{ border-bottom:none; }
+  .pending-info{ flex:1; } .pending-info .who{ font-weight:600; color:var(--plum); font-size:.95rem; }
+  .pending-info .meta{ font-size:.82rem; color:#8a6a78; }
+  .pending-actions{ display:flex; gap:8px; align-items:center; }
+  .confirm-btn{ font-family:'Lora',serif; font-weight:600; font-size:.82rem; border:none; border-radius:999px; padding:8px 14px; background:var(--sage); color:white; cursor:pointer; }
+  .confirm-btn:hover{ transform:translateY(-1px); }
+  .del-btn{ border:none; background:transparent; color:#c39aa8; cursor:pointer; font-size:1.1rem; padding:4px 6px; line-height:1; }
+  .del-btn:hover{ color:var(--coral); }
+  .empty-note{ font-size:.88rem; color:#a0818f; font-style:italic; }
+  .filter-chips{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .chip{ font-family:'Lora',serif; font-size:.8rem; padding:6px 13px; border-radius:999px; border:1.5px solid #e6d0d8; background:#fffdfe; color:#7a5a68; cursor:pointer; }
+  .chip.active{ background:var(--plum); color:white; border-color:var(--plum); }
+  .log-item{ display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid #f4e3e8; }
+  .log-item:last-child{ border-bottom:none; }
+  .log-dot{ width:10px;height:10px;border-radius:50%; margin-top:6px;flex-shrink:0; }
+  .log-dot.math{ background:var(--sapphire); } .log-dot.science{ background:var(--sage); } .log-dot.none{ background:#c9a9d0; }
+  .log-body{ flex:1; }
+  .log-top{ display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .log-who{ font-weight:600; color:var(--plum); font-size:.92rem; }
+  .log-date{ font-family:'IBM Plex Mono',monospace; font-size:.78rem; color:#a0818f; }
+  .log-topics{ font-size:.88rem; color:#5a4050; margin-top:2px; }
+  .status-chip{ display:inline-block; font-size:.7rem; padding:2px 9px; border-radius:999px; margin-top:6px; font-family:'IBM Plex Mono',monospace; }
+  .status-chip.pending{ background:var(--gold-soft); color:#9a5c2a; }
+  .status-chip.confirmed{ background:var(--sage-soft); color:var(--sage); }
+  .status-chip.paid{ background:var(--coral-soft); color:var(--coral); }
+  .status-chip.noshow{ background:#ece0f0; color:#7a5a8a; }
+  .pay-card{ border-top:4px solid var(--gold); }
+  .payer-summary{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:16px; }
+  .payer-tile{ background:var(--gold-soft); border-radius:12px; padding:12px 14px; }
+  .payer-tile .pname{ font-family:'Playfair Display',serif; font-weight:700; color:var(--plum); font-size:1rem; margin:0 0 3px; }
+  .payer-tile .pstat{ font-size:.8rem; color:#6a4d5a; }
+  .paid-batch{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:11px 0; border-bottom:1px dashed #e6d0d8; font-size:.88rem; }
+  .paid-batch:last-child{ border-bottom:none; }
+  .paid-batch .pb-main{ color:var(--plum); font-weight:600; }
+  .paid-batch .pb-meta{ color:#8a6a78; font-size:.82rem; }
+  .paid-batch .pb-amount{ font-family:'IBM Plex Mono',monospace; color:var(--coral); font-weight:600; white-space:nowrap; }
+  .solenn-pay-banner{ background:var(--sage-soft); border:1.5px solid rgba(138,79,158,.2); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:.85rem; color:var(--sage); }
+  .pay-status-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #ede0f4; flex-wrap:wrap; }
+  .pay-status-row:last-child{ border-bottom:none; }
+  .pay-status-label{ font-size:.88rem; color:var(--plum); font-weight:600; }
+  .loading-bar{ text-align:center; padding:40px 0; color:#a0818f; font-style:italic; }
+  .sync-indicator{ display:inline-block; font-size:.72rem; color:#a06377; margin-left:8px; font-family:'IBM Plex Mono',monospace; }
+  footer{ text-align:center; font-size:.78rem; color:#c19aa8; margin:30px 0 10px; font-style:italic; }
+  .toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--plum); color:white; padding:10px 18px; border-radius:999px; font-size:.85rem; box-shadow:0 6px 16px rgba(0,0,0,.2); opacity:0; transition:opacity .3s ease; pointer-events:none; z-index:50; }
+  .toast.show{ opacity:1; }
+  @media(prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="app-shell" id="app"><div class="loading-bar">Opening Solenn's journal…</div></div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  // ── Google Apps Script Web App URL (database) ──
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbx9Ep1jnW2pI1cDba6SZNZsMt9Sxbo3V9P2_H2bD3JpVaPZFXIqBR2Y_6Nh0qGGNTpa/exec";
+  const IK = "solenn-identity-v2";
+
+  let sessions=[], payments=[], identity=null, filterTutor="All", payPanelFor=null, noSesChecked=false, syncing=false;
+
+  const PEOPLE={ Solenn:{role:"student"}, Joseph:{role:"tutor",subjects:["Math"],accent:"math"}, Alica:{role:"tutor",subjects:["Chemistry","Physics"],accent:"science"}, Clesie:{role:"admin"}, Rose:{role:"parent"}, Clement:{role:"parent"} };
+  const PARENT_NAMES=["Clesie","Rose","Clement"], TUTOR_NAMES=["Joseph","Alica"];
+  const ROLE_LABELS={student:"Student",tutor:"Tutor",parent:"Parent",admin:"Admin"};
+
+  const ICONS={
+    book:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 4C10 3 7 3 4 4v15c3-1 6-1 8 0c2-1 5-1 8 0V4c-3-1-6-1-8 0Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 4v15" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    flask:`<svg viewBox="0 0 24 24" fill="none"><path d="M9 3h6M10 3v6l-5.2 9a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9V3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+    note:`<svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="18" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 18V5.5L19 4v10" stroke="currentColor" stroke-width="1.5"/><circle cx="16.5" cy="14" r="2.6" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    shield:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3c-3 1.5-6.5 1.5-9 .5v9c0 5 4 8 9 9.5C17 20 21 17 21 12.5v-9c-2.5 1-6 1-9-.5Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    crest:`<svg viewBox="0 0 48 48" fill="none"><path d="M24 5c-6 3-13 3-17 1v20c0 9 8 14 17 17c9-3 17-8 17-17V6c-4 2-11 2-17-1Z" stroke="#C77D8A" stroke-width="1.6" fill="#FDF0F1"/><path d="M24 13c-3 2-8 2-11 1v11c0 5 5 8 11 10c6-2 11-5 11-10V14c-3 1-8 1-11-1Z" fill="#F7DFE3" opacity="0.8"/><path d="M18 22l3 3 7-7" stroke="#6E2145" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  };
+
+  const GREETINGS={ Solenn:"Hi Solenn! Every session here is a page in your story. 📖🎵", Joseph:"Welcome, Joseph — thank you for all the math magic!", Alica:"Welcome, Alica — thank you for bringing chemistry & physics to life!", Clesie:"Hi Clesie! You have full admin access to manage the journal. 🛡️", Rose:"Hi Rose — here's the journal and payment history.", Clement:"Hi Clement — here's the journal and payment history." };
+
+  function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+  function fmtDate(d){ if(!d) return ""; const dt=new Date(d+"T00:00:00"); return dt.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+  function roleOf(n){ return PEOPLE[n]?PEOPLE[n].role:null; }
+  function isAdmin(){ return identity==="Clesie"; }
+  function esc(s){ const d=document.createElement('div'); d.textContent=s||""; return d.innerHTML; }
+  function isNo(s){ return s.type==='no_session'; }
+
+  // ── Google Sheets API calls ──
+  async function gasCall(body){
+    try{
+      const res = await fetch(GAS_URL, {
+        method:'POST',
+        body: JSON.stringify(body)
+      });
+      return await res.json();
+    }catch(e){
+      console.error("GAS error:",e);
+      return null;
+    }
+  }
+
+  function sessionsToRows(arr){
+    return arr.map(s=>[s.id,s.type||'session',s.tutor,s.subject,s.date,s.topics,s.confirmed?'1':'0',s.paid?'1':'0',s.loggedAt||'',s.confirmedAt||'',s.paidAt||'']);
+  }
+  function rowsToSessions(rows){
+    return rows.filter(r=>r[0]).map(r=>({ id:r[0], type:r[1]||'session', tutor:r[2], subject:r[3], date:r[4], topics:r[5], confirmed:r[6]==='1', paid:r[7]==='1', loggedAt:r[8], confirmedAt:r[9], paidAt:r[10] }));
+  }
+  function paymentsToRows(arr){
+    return arr.map(p=>[p.id,p.payer,p.tutor,JSON.stringify(p.sessionIds||[]),JSON.stringify(p.dates||[]),p.sessionsHeld||0,p.noSessions||0,p.amount||'',p.paidAt||'']);
+  }
+  function rowsToPayments(rows){
+    return rows.filter(r=>r[0]).map(r=>({ id:r[0], payer:r[1], tutor:r[2], sessionIds:JSON.parse(r[3]||'[]'), dates:JSON.parse(r[4]||'[]'), sessionsHeld:Number(r[5]), noSessions:Number(r[6]), amount:r[7]?Number(r[7]):null, paidAt:r[8] }));
+  }
+
+  async function loadAll(){
+    const [sr, pr] = await Promise.all([
+      gasCall({action:'getSessions'}),
+      gasCall({action:'getPayments'})
+    ]);
+    sessions = sr && sr.sessions ? rowsToSessions(sr.sessions) : [];
+    payments = pr && pr.payments ? rowsToPayments(pr.payments) : [];
+    identity = localStorage.getItem(IK) || null;
+    if(identity && !PEOPLE[identity]) identity = null;
+  }
+
+  async function saveSessions(){
+    syncing=true;
+    await gasCall({action:'saveSessions', sessions: sessionsToRows(sessions)});
+    syncing=false;
+  }
+  async function savePayments(){
+    syncing=true;
+    await gasCall({action:'savePayments', payments: paymentsToRows(payments)});
+    syncing=false;
+  }
+
+  function setIdentity(n){ identity=n; localStorage.setItem(IK,n); render(); }
+  function clearIdentity(){ identity=null; localStorage.removeItem(IK); render(); }
+
+  function unpaidPeriodItems(tutor){ return sessions.filter(s=>s.tutor===tutor&&!s.paid&&(isNo(s)||s.confirmed)).sort((a,b)=>a.date.localeCompare(b.date)); }
+
+  async function addSession(tutor,subject,date,topics){
+    sessions.push({id:uid(),type:'session',tutor,subject,date,topics,confirmed:false,paid:false,loggedAt:new Date().toISOString()});
+    render(); await saveSessions(); toast("Session added — waiting for Solenn to confirm ✨");
+  }
+  async function addNoSession(tutor,date){
+    sessions.push({id:uid(),type:'no_session',tutor,subject:"—",date,topics:"No session (schedule conflict)",confirmed:true,paid:false,loggedAt:new Date().toISOString()});
+    render(); await saveSessions(); toast("Marked 'No session' for that date 🗓️");
+  }
+  async function confirmSession(id){
+    const s=sessions.find(x=>x.id===id); if(s){s.confirmed=true;s.confirmedAt=new Date().toISOString();}
+    render(); await saveSessions(); toast("Confirmed! 📖 Great job, Solenn.");
+  }
+  async function deleteEntry(id){
+    if(!confirm("Remove this entry? This can't be undone.")) return;
+    sessions=sessions.filter(x=>x.id!==id); render(); await saveSessions();
+  }
+  async function deletePayment(id){
+    if(!confirm("Admin: remove this payment record?")) return;
+    payments=payments.filter(x=>x.id!==id); render(); await savePayments();
+  }
+  async function recordPayment(tutor,amountRaw,countRaw){
+    const all=unpaidPeriodItems(tutor); if(all.length===0) return;
+    const count=Math.min(Math.max(parseInt(countRaw)||all.length,1),all.length);
+    const batch=all.slice(0,count);
+    const held=batch.filter(s=>!isNo(s)).length, noS=batch.length-held;
+    const paidAt=new Date().toISOString();
+    let amount=null; if(amountRaw&&String(amountRaw).trim()!==""){const n=parseFloat(String(amountRaw).replace(/[^0-9.]/g,'')); if(!isNaN(n)) amount=n;}
+    batch.forEach(s=>{s.paid=true;s.paidAt=paidAt;});
+    payments.push({id:uid(),payer:identity,tutor,sessionIds:batch.map(s=>s.id),dates:batch.map(s=>s.date).sort(),sessionsHeld:held,noSessions:noS,amount,paidAt});
+    payPanelFor=null; render(); await saveSessions(); await savePayments(); toast("💛 Payment recorded for "+tutor+"!");
+  }
+
+  function crestHTML(){ return `<div class="crest">${ICONS.crest}</div><h1>Solenn's Learning Journal</h1><p class="subtitle">Math with Joseph · Chemistry &amp; Physics with Alica</p><div class="staff-divider"><span class="line"></span>${ICONS.note}<span class="line"></span></div>`; }
+
+  function identityScreen(){
+    document.getElementById('app').innerHTML=`${crestHTML()}<div class="id-screen"><div class="id-card">
+      <h2>Welcome! Who are you?</h2>
+      <p class="sub">Tap your name. We'll remember it on this device.</p>
+      <div class="id-group"><div class="label">Student</div><div class="id-btns"><button class="id-btn" data-id="Solenn">Solenn</button></div></div>
+      <div class="id-group"><div class="label">Tutors</div><div class="id-btns"><button class="id-btn" data-id="Joseph">Joseph</button><button class="id-btn" data-id="Alica">Alica</button></div></div>
+      <div class="id-group"><div class="label">Parents</div><div class="id-btns">
+        <button class="id-btn admin-btn" data-id="Clesie">Clesie 🛡️</button>
+        <button class="id-btn" data-id="Rose">Rose</button>
+        <button class="id-btn" data-id="Clement">Clement</button>
+      </div></div>
+      <p class="id-note">Clesie has admin access. Everyone else sees their own role.</p>
+    </div></div>`;
+    document.getElementById('app').querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',()=>setIdentity(b.getAttribute('data-id'))));
+  }
+
+  function idBarHTML(){ const role=roleOf(identity),label=ROLE_LABELS[role]||role; return `<div class="id-bar"><span>You are <span class="you">${identity}</span></span><span class="role-tag ${role}">${label}</span><button class="switch" id="switchBtn">Not you? Switch</button></div><div class="greeting-line">${GREETINGS[identity]||""}</div>`; }
+  function adminBannerHTML(){ return `<div class="admin-banner">${ICONS.shield}<span><strong>Admin mode:</strong> Log sessions for any tutor, confirm entries, delete records, manage payments.</span></div>`; }
+
+  function tutorCardHTML(tutorName,canPay){
+    const info=PEOPLE[tutorName],items=unpaidPeriodItems(tutorName),filled=Math.min(items.length,4);
+    const slots=items.slice(0,4),held=items.filter(s=>!isNo(s)).length;
+    const icon=tutorName==="Joseph"?ICONS.book:ICONS.flask;
+    const recentTopics=sessions.filter(s=>s.tutor===tutorName&&!isNo(s)&&s.confirmed).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3).map(s=>s.topics);
+    let caption;
+    if(items.length===0) caption="No sessions waiting on payment yet.";
+    else if(items.length>=4) caption=`4 slots reached — ready to pay!`;
+    else caption=`${items.length} of 4 slots this pay period.`;
+    let payArea="";
+    if(canPay){
+      const ready=items.length>=1;
+      if(payPanelFor===tutorName&&ready){
+        const maxCount=items.length;
+        const countOpts=Array.from({length:maxCount},(_,i)=>i+1).map(n=>`<option value="${n}" ${n===maxCount?'selected':''}>${n} session${n!==1?'s':''}</option>`).join('');
+        payArea=`<div class="pay-panel">
+          <div class="dates">Sessions waiting:<br>${items.map(s=>isNo(s)?`${fmtDate(s.date)} (no session)`:fmtDate(s.date)).join(" · ")}</div>
+          <label for="cnt-${tutorName}">How many sessions to pay now?</label>
+          <select id="cnt-${tutorName}">${countOpts}</select>
+          <label for="amt-${tutorName}">Amount paid (optional, in ₱)</label>
+          <input type="text" id="amt-${tutorName}" inputmode="decimal" placeholder="e.g. 1800" />
+          <div class="row"><button class="pay-confirm" data-payconfirm="${tutorName}">Confirm payment</button><button class="pay-cancel" data-paycancel="1">Cancel</button></div>
+        </div>`;
+      } else {
+        payArea=`<button class="pay-btn" ${ready?'':'disabled'} data-payopen="${tutorName}">Record payment</button>`;
+      }
+    }
+    return `<div class="tutor-card ${info.accent}">
+      <div class="tutor-card-top"><div class="tutor-icon">${icon}</div><div><p class="tutor-name">${tutorName}</p><p class="tutor-subject">${info.subjects.join(" & ")}</p></div></div>
+      <div class="hymn-row">${[0,1,2,3].map(i=>{const on=i<filled,no=on&&isNo(slots[i]);return `<div class="hymn-tile ${on?'filled':''} ${no?'noslot':''}">${on?(no?'–':'✓'):''}</div>`;}).join('')}</div>
+      <p class="hymn-caption">${caption}</p>
+      ${payArea}
+      ${recentTopics.length?`<div class="recent-topics">Recently covered:<ul>${recentTopics.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:''}
+    </div>`;
+  }
+
+  function adminFormHTML(){
+    const noS=noSesChecked;
+    return `<div class="card admin-form-card">
+      <h2>🛡️ Log a session (Admin)</h2><p class="card-sub">Log for any tutor. Solenn will confirm.</p>
+      <div class="noses-toggle"><input type="checkbox" id="fNoSession" ${noS?'checked':''}/><label for="fNoSession">No session this date (schedule conflict)</label></div>
+      <div class="form-grid">
+        <div class="field"><label for="fTutor">Tutor</label><select id="fTutor"><option>Joseph</option><option>Alica</option></select></div>
+        <div class="field"><label for="fSubject">Subject</label><select id="fSubject" ${noS?'disabled':''}><option>Math</option></select></div>
+        <div class="field"><label for="fDate">Date</label><input type="date" id="fDate" /></div>
+        <div class="field full"><label for="fTopics">What was covered?</label><input type="text" id="fTopics" placeholder="e.g. Quadratic equations" ${noS?'disabled':''}/></div>
+      </div>
+      <div class="submit-row"><button class="add-btn admin-add" id="addBtn">${noS?"Add 'No session'":"Add session"}</button></div>
+    </div>`;
+  }
+
+  function tutorFormHTML(){
+    const noS=noSesChecked,subs=PEOPLE[identity].subjects;
+    return `<div class="card form-card">
+      <h2>Log a session</h2><p class="card-sub">Add today's session. Solenn will confirm it.</p>
+      <div class="noses-toggle"><input type="checkbox" id="fNoSession" ${noS?'checked':''}/><label for="fNoSession">No session this date (schedule conflict)</label></div>
+      <div class="form-grid">
+        <div class="field"><label>Tutor</label><select disabled><option>${identity}</option></select><div class="locked-note">Logged as you — ${identity}.</div></div>
+        <div class="field"><label for="fSubject">Subject</label><select id="fSubject" ${noS?'disabled':''}>${subs.map(s=>`<option>${s}</option>`).join('')}</select></div>
+        <div class="field"><label for="fDate">Date</label><input type="date" id="fDate" /></div>
+        <div class="field full"><label for="fTopics">What did you cover today?</label><input type="text" id="fTopics" placeholder="e.g. Quadratic equations" ${noS?'disabled':''}/></div>
+      </div>
+      <div class="submit-row"><button class="add-btn" id="addBtn">${noS?"Add 'No session'":"Add session"}</button></div>
+    </div>`;
+  }
+
+  function pendingHTML(){
+    const pending=sessions.filter(s=>!isNo(s)&&!s.confirmed).sort((a,b)=>a.date.localeCompare(b.date));
+    return `<div class="card pending-card">
+      <h2>Sessions to confirm</h2><p class="card-sub">Solenn — tap "Yes, that happened" once done. Clesie can also confirm.</p>
+      ${pending.length===0?`<p class="empty-note">Nothing waiting right now. ✨</p>`:pending.map(s=>`<div class="pending-item"><div class="pending-info"><div class="who">${s.tutor} · ${esc(s.subject)} — ${fmtDate(s.date)}</div><div class="meta">${esc(s.topics||"No topic noted")}</div></div><div class="pending-actions"><button class="confirm-btn" data-confirm="${s.id}">Yes, that happened ✓</button>${isAdmin()?`<button class="del-btn" data-del="${s.id}">✕</button>`:''}</div></div>`).join('')}
+    </div>`;
+  }
+
+  function historyHTML(){
+    const role=roleOf(identity);
+    let visible=sessions.slice(),chips=["All","Joseph","Alica"];
+    if(role==="tutor"){visible=visible.filter(s=>s.tutor===identity);chips=null;}
+    const filtered=visible.filter(s=>filterTutor==="All"||s.tutor===filterTutor).sort((a,b)=>b.date.localeCompare(a.date));
+    return `<div class="card">
+      <h2>${role==="tutor"?"Your sessions":"Full journal"}</h2><p class="card-sub">Every session and what was covered.</p>
+      ${chips?`<div class="filter-chips">${chips.map(c=>`<button class="chip ${filterTutor===c?'active':''}" data-filter="${c}">${c}</button>`).join('')}</div>`:''}
+      ${filtered.length===0?`<p class="empty-note">No sessions logged yet.</p>`:filtered.map(s=>{
+        const no=isNo(s),status=no?"noshow":(s.paid?"paid":(s.confirmed?"confirmed":"pending"));
+        const statusLabel=no?"No session":(s.paid?"Paid":(s.confirmed?"Confirmed":"Pending confirmation"));
+        const dotClass=no?"none":(s.tutor==="Joseph"?"math":"science");
+        const canDel=isAdmin()||(!s.paid&&role==="tutor"&&s.tutor===identity);
+        return `<div class="log-item"><div class="log-dot ${dotClass}"></div><div class="log-body">
+          <div class="log-top"><span class="log-who">${no?`${s.tutor} · No session`:`${s.tutor} · ${esc(s.subject)}`}</span><span class="log-date">${fmtDate(s.date)}</span></div>
+          <div class="log-topics">${esc(s.topics||"No topic noted")}</div>
+          <span class="status-chip ${status}">${statusLabel}</span>
+          ${canDel?`<button class="del-btn" data-del="${s.id}" style="float:right;">✕</button>`:''}
+        </div></div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  function paymentHistoryHTML(readOnly=false){
+    const summary=PARENT_NAMES.map(p=>{const mine=payments.filter(x=>x.payer===p);const sess=mine.reduce((a,x)=>a+(x.sessionsHeld||0),0);const amt=mine.reduce((a,x)=>a+(x.amount||0),0);return{p,count:mine.length,sess,amt};});
+    const ordered=payments.slice().sort((a,b)=>(b.paidAt||"").localeCompare(a.paidAt||""));
+    if(readOnly){
+      const totalPaid=sessions.filter(s=>!isNo(s)&&s.paid).length;
+      const totalConfirmed=sessions.filter(s=>!isNo(s)&&s.confirmed&&!s.paid).length;
+      const totalPending=sessions.filter(s=>!isNo(s)&&!s.confirmed&&!s.paid).length;
+      return `<div class="card pay-card">
+        <h2>Payment status</h2><p class="card-sub">So you know where each session stands. 📖</p>
+        <div class="solenn-pay-banner">🌸 Every confirmed session that's paid for is yours to build on.</div>
+        <div class="pay-status-row"><span class="pay-status-label">✅ Sessions paid for</span><span class="status-chip paid">${totalPaid} session${totalPaid!==1?'s':''}</span></div>
+        <div class="pay-status-row"><span class="pay-status-label">🟡 Confirmed — payment coming</span><span class="status-chip confirmed">${totalConfirmed} session${totalConfirmed!==1?'s':''}</span></div>
+        <div class="pay-status-row"><span class="pay-status-label">⏳ Waiting for your confirmation</span><span class="status-chip pending">${totalPending} session${totalPending!==1?'s':''}</span></div>
+        ${ordered.length?`<div style="margin-top:16px;"><p class="card-sub" style="margin:0 0 8px;">Recent payments:</p>${ordered.slice(0,5).map(x=>{const from=x.dates&&x.dates.length?fmtDate(x.dates[0]):"";const to=x.dates&&x.dates.length?fmtDate(x.dates[x.dates.length-1]):"";return `<div class="paid-batch"><div><div class="pb-main">${x.payer} paid ${x.tutor} — ${x.sessionsHeld} session${x.sessionsHeld!==1?'s':''}</div><div class="pb-meta">${from} → ${to}</div></div></div>`;}).join('')}</div>`:''}
+      </div>`;
+    }
+    return `<div class="card pay-card">
+      <h2>Payment history</h2><p class="card-sub">Who paid, when, and which sessions.</p>
+      <div class="payer-summary">${summary.map(s=>`<div class="payer-tile"><p class="pname">${s.p}</p><p class="pstat">${s.count} payment${s.count!==1?'s':''} · ${s.sess} sessions${s.amt?` · ₱${s.amt.toLocaleString()}`:''}</p></div>`).join('')}</div>
+      ${ordered.length===0?`<p class="empty-note">No payments recorded yet.</p>`:ordered.map(x=>{const from=x.dates&&x.dates.length?fmtDate(x.dates[0]):"";const to=x.dates&&x.dates.length?fmtDate(x.dates[x.dates.length-1]):"";
+        return `<div class="paid-batch"><div><div class="pb-main">${x.payer} paid ${x.tutor} — ${x.sessionsHeld} session${x.sessionsHeld!==1?'s':''}${x.noSessions?` (+${x.noSessions} no-session)`:''}</div><div class="pb-meta">${from} → ${to} · paid ${fmtDate((x.paidAt||"").slice(0,10))}</div></div><div style="display:flex;align-items:center;gap:8px;">${x.amount?`<div class="pb-amount">₱${x.amount.toLocaleString()}</div>`:''}${isAdmin()?`<button class="del-btn" data-delpay="${x.id}">✕</button>`:''}</div></div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  function updateSubjects(){
+    const ft=document.getElementById('fTutor');
+    const fs=document.getElementById('fSubject');
+    if(!ft||!fs) return;
+    const subs=(PEOPLE[ft.value]||PEOPLE.Joseph).subjects;
+    fs.innerHTML=subs.map(s=>`<option>${s}</option>`).join('');
+  }
+
+  function wireForm(defaultTutor){
+    const d=document.getElementById('fDate'); if(d) d.value=new Date().toISOString().slice(0,10);
+    const chk=document.getElementById('fNoSession'); if(chk) chk.addEventListener('change',()=>{noSesChecked=chk.checked;render();});
+    const ft=document.getElementById('fTutor'); if(ft&&isAdmin()){ updateSubjects(); ft.addEventListener('change',()=>updateSubjects()); }
+    const addBtn=document.getElementById('addBtn');
+    if(addBtn) addBtn.addEventListener('click',async()=>{
+      const chosenTutor=isAdmin()?(document.getElementById('fTutor').value||defaultTutor):defaultTutor;
+      const date=document.getElementById('fDate').value; if(!date){toast("Please pick a date.");return;}
+      if(noSesChecked){ noSesChecked=false; await addNoSession(chosenTutor,date); }
+      else{ const subject=(document.getElementById('fSubject')||{}).value||""; const topics=(document.getElementById('fTopics')||{}).value||""; await addSession(chosenTutor,subject,date,topics); }
+    });
+  }
+
+  function render(){
+    if(!identity){ identityScreen(); return; }
+    const role=roleOf(identity), app=document.getElementById('app');
+    let body=crestHTML()+idBarHTML();
+    if(role==="admin"){ body+=adminBannerHTML()+`<div class="stats-row">${tutorCardHTML("Joseph",true)}${tutorCardHTML("Alica",true)}</div>`+adminFormHTML()+pendingHTML()+historyHTML()+paymentHistoryHTML(false); }
+    else if(role==="parent"){ body+=`<div class="stats-row">${tutorCardHTML("Joseph",true)}${tutorCardHTML("Alica",true)}</div>`+historyHTML()+paymentHistoryHTML(false); }
+    else if(role==="tutor"){ body+=`<div class="stats-row" style="grid-template-columns:1fr;max-width:420px;margin:0 auto 22px;">${tutorCardHTML(identity,false)}</div>`+tutorFormHTML()+historyHTML(); }
+    else if(role==="student"){ body+=`<div class="stats-row">${tutorCardHTML("Joseph",false)}${tutorCardHTML("Alica",false)}</div>`+pendingHTML()+historyHTML()+paymentHistoryHTML(true); }
+    body+=`<footer>Made with love for Solenn's math, chemistry &amp; physics journey 🎹📖</footer>`;
+    app.innerHTML=body;
+    const sw=document.getElementById('switchBtn'); if(sw) sw.addEventListener('click',()=>{if(confirm("Switch to a different name?")) clearIdentity();});
+    if(role==="admin"||role==="tutor") wireForm(role==="tutor"?identity:"Joseph");
+    app.querySelectorAll('[data-confirm]').forEach(b=>b.addEventListener('click',()=>confirmSession(b.getAttribute('data-confirm'))));
+    app.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>deleteEntry(b.getAttribute('data-del'))));
+    app.querySelectorAll('[data-delpay]').forEach(b=>b.addEventListener('click',()=>deletePayment(b.getAttribute('data-delpay'))));
+    app.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filterTutor=b.getAttribute('data-filter');render();}));
+    app.querySelectorAll('[data-payopen]').forEach(b=>b.addEventListener('click',()=>{payPanelFor=b.getAttribute('data-payopen');render();}));
+    app.querySelectorAll('[data-paycancel]').forEach(b=>b.addEventListener('click',()=>{payPanelFor=null;render();}));
+    app.querySelectorAll('[data-payconfirm]').forEach(b=>b.addEventListener('click',()=>{const t=b.getAttribute('data-payconfirm');const el=document.getElementById('amt-'+t);const cnt=document.getElementById('cnt-'+t);recordPayment(t,el?el.value:"",cnt?cnt.value:"");}));
+  }
+
+  async function init(){ await loadAll(); render(); }
+  init();
+})();
+</script>
+</body>
+</html>
